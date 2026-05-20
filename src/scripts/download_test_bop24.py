@@ -2,6 +2,7 @@ from omegaconf import DictConfig, OmegaConf
 import logging
 import os
 import os.path as osp
+import shutil
 import hydra
 from pathlib import Path
 from src.utils.logging import get_logger
@@ -15,7 +16,23 @@ def run_download(config: DictConfig) -> None:
     )
     logger.info(f"Saving dataset to {local_dir}")
 
-    download_cmd = f"huggingface-cli download bop-benchmark/datasets --include {config.test_dataset_name}/* --exclude *train_pbr* --local-dir {config.data.test.dataloader.root_dir} --repo-type=dataset"
+    repo_id = f"bop-benchmark/{config.test_dataset_name}"
+
+    hf_bin = shutil.which("hf")
+    if hf_bin:
+        download_cmd = (
+            f"{hf_bin} download {repo_id} "
+            "--include *.zip "
+            f"--local-dir {config.data.test.dataloader.root_dir} "
+            "--repo-type=dataset"
+        )
+    else:
+        download_cmd = (
+            f"huggingface-cli download {repo_id} "
+            "--include *.zip "
+            f"--local-dir {config.data.test.dataloader.root_dir} "
+            "--repo-type=dataset"
+        )
     logger.info(f"Running {download_cmd}")
     os.system(download_cmd)
     logger.info(f"Dataset downloaded to {local_dir}")
@@ -39,6 +56,12 @@ def run_download(config: DictConfig) -> None:
 
     split = "test"
     split_dir = Path(local_dir) / split
+    if not split_dir.exists() or not any(split_dir.iterdir()):
+        raise RuntimeError(
+            f"{split_dir} is empty after download/extraction. "
+            "This usually means the Hugging Face download did not fetch the expected files "
+            "for the selected dataset name, or the dataset archive layout changed."
+        )
     tmp_dir = (
         Path(config.data.test.dataloader.root_dir)
         / "tmp"

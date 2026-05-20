@@ -7,7 +7,8 @@ channels:
   - defaults
 dependencies:
   - pip
-  - python=3.9.6
+  - setuptools
+  - python=3.10
   - pip:
     - torch
     - torchvision
@@ -19,6 +20,7 @@ dependencies:
     - opencv-python 
     - pycocotools 
     - matplotlib 
+    - scikit-image 
     - onnxruntime 
     - onnx
     - scipy
@@ -26,6 +28,7 @@ dependencies:
     - hydra-colorlog
     - hydra-core
     - gdown
+    - einops
     - pytorch-lightning==1.8.1
     - pandas
     - ruamel.yaml

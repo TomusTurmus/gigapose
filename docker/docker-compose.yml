@@ -1,0 +1,24 @@
+services:
+  gigapose:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: gigapose:latest
+    runtime: nvidia
+    stdin_open: true
+    tty: true
+    environment:
+      - HF_TOKEN
+      - DATASET_NAME=hope
+      - NAME_RUN=myrun
+      - MPLCONFIGDIR=/workspace/.cache/matplotlib
+    volumes:
+      - ../:/workspace
+      - ../gigaPose_datasets:/workspace/gigaPose_datasets
+      - /home/pose/dipl/gigapose:/home/pose/dipl/gigapose:rw
+      - /home/$USER/.cache/huggingface:/root/.cache/huggingface:rw
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]

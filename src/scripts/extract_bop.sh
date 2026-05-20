@@ -1,4 +1,11 @@
-for file in $LOCAL_DIR/$NAME/*.zip; do
+shopt -s nullglob
+
+zip_files=($LOCAL_DIR/$NAME/*.zip)
+if [[ ${#zip_files[@]} -eq 0 ]]; then
+    zip_files=($LOCAL_DIR/*.zip)
+fi
+
+for file in "${zip_files[@]}"; do
     if [[ $file == *_base.zip ]]; then
         unzip -q -j "$file" -d "$(dirname "$file")"
         echo "Extraction of base file $file is complete."

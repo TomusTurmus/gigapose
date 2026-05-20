@@ -115,6 +115,11 @@ def convert_imagewise_to_webdataset(
     start_shard,
     maxcount,
 ):
+    if len(image_keys) == 0:
+        raise ValueError(
+            f"No imagewise files found in {input_dir}. "
+            "The preceding download/extraction step likely failed or produced an empty split."
+        )
     wds_dir.mkdir(exist_ok=True)
     shard_writer = wds.ShardWriter(
         pattern=str(wds_dir / "shard-%06d.tar"),
@@ -174,6 +179,12 @@ def main():
     input_file_paths = input_dir.glob("*")
     keys = set([p.name.split(".")[0] for p in input_file_paths])
     keys = list(keys)
+
+    if len(keys) == 0:
+        raise ValueError(
+            f"No files found in {input_dir}. "
+            "Check that the dataset was downloaded and extracted before converting to WebDataset."
+        )
 
     if args.shuffle:
         np.random.RandomState(args.seed).shuffle(keys)

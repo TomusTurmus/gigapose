@@ -119,7 +119,8 @@ def main(args):
     args = parse_args()
 
     input_dir = pathlib.Path(args.input)
-    output_dir = pathlib.Path(args.output, exist_ok=True)
+    output_dir = pathlib.Path(args.output)
+    output_dir.mkdir(parents=True, exist_ok=True)
 
     if args.scene_ids is not None:
         scene_ids = [int(scene_id) for scene_id in args.scene_ids.split(",")]
