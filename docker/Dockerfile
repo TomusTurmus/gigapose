@@ -30,9 +30,12 @@ RUN python -c "from pathlib import Path; path = Path('/tmp/environment.build.yml
 RUN python -c "from pathlib import Path; path = Path('/tmp/environment.build.yml'); text = path.read_text(); text = text.replace('    - torchvision\n', '    - torchvision==0.15.1\n', 1); path.write_text(text)"
 RUN python -c "from pathlib import Path; path = Path('/tmp/environment.build.yml'); text = path.read_text(); path.write_text(text.replace('    - opencv-python \n', '    - opencv-python<4.13 \n', 1))"
 RUN /opt/conda/bin/conda env create -f /tmp/environment.build.yml -n gigapose || /opt/conda/bin/conda env update -n gigapose -f /tmp/environment.build.yml
+RUN /opt/conda/bin/conda install -n gigapose -c conda-forge pinocchio=2.6.20
 RUN /opt/conda/bin/conda run -n gigapose pip install --no-cache-dir --force-reinstall "numpy<2" "opencv-python<4.13"
+RUN /opt/conda/bin/conda run -n gigapose pip uninstall -y setuptools \
+    && /opt/conda/bin/conda run -n gigapose pip install --no-cache-dir "setuptools<81"
+RUN /opt/conda/bin/conda run -n gigapose pip install -e /workspace
 RUN /opt/conda/bin/conda run -n gigapose pip install git+https://github.com/thodan/bop_toolkit.git
-
 # Ensure hf cli is available
 RUN /opt/conda/bin/conda run -n gigapose pip install --no-cache-dir --upgrade huggingface_hub
 

@@ -38,11 +38,24 @@ This note captures the steps already taken to get the BOP 2024 HOPE dataset down
    python -m src.scripts.download_test_bop24 test_dataset_name=$DATASET_NAME
    ```
 
-5. The downloader now fetches the top-level `*.zip` archives from `bop-benchmark/hope` and extracts them whether they are stored at the repo root or under a dataset folder.
+5. The BOP24 downloader now fetches the top-level `*.zip` archives from dataset-specific Hugging Face repos such as `bop-benchmark/hope`, `bop-benchmark/handal`, and `bop-benchmark/hot3d`.
 
-6. If the script reports that the split is empty, verify that the Hugging Face account has access to `bop-benchmark/hope` and that the token is still valid.
+6. The extractor now accepts zip files stored either directly under the dataset folder or at the repo root, so the download layout can vary without breaking the flow.
+
+7. If the script reports that the split is empty, verify that the Hugging Face account has access to the selected repo and that the token is still valid.
+
+8. For BOP23 datasets, run:
+
+   ```bash
+   python -m src.scripts.download_test_bop23
+   ```
+
+   This script now also downloads from the dataset-specific Hugging Face repos and unpacks the dataset zips locally before converting them to WebDataset format.
+
+9. If BOP23 conversion fails with an empty split, it usually means the downloaded repo contained no `*.zip` files for that dataset or the repo name is wrong.
 
 ## Notes
 
-- The script now expects dataset-specific Hugging Face repos like `bop-benchmark/hope`, `bop-benchmark/handal`, and `bop-benchmark/hot3d`, and it downloads the zip archives from the repo root.
+- The scripts no longer depend on the older aggregate Hugging Face repo path.
+- The scripts raise a clear error when the expected archive files or extracted split files are missing, which usually indicates an auth or repo-layout problem.
 - If you are running inside Docker and see a torch import error related to `iJIT_NotifyEvent`, the container may also need `LD_PRELOAD=/opt/conda/envs/gigapose/lib/libiomp5.so` set in the container environment.
