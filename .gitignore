@@ -18,6 +18,8 @@ tmp/
 # training datasets
 gigaPose_datasets/
 
+cuda-repo-ubuntu2204-11-7-local_11.7.0-515.43.04-1_amd64.deb
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
