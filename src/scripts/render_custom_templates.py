@@ -60,7 +60,7 @@ def call_render(
     config_name="train",
 )
 def render(cfg) -> None:
-    num_gpus = 4
+    num_gpus = 1  # this machine has a single GPU (RTX A2000); was hardcoded to 4
     disable_output = True
 
     OmegaConf.set_struct(cfg, False)
@@ -78,8 +78,10 @@ def render(cfg) -> None:
 
     cad_dir = root_dir / dataset_name / "models"
 
-    cad_paths = list(cad_dir.glob("*.ply"))
-    cad_paths += list(cad_dir.glob("*.obj"))
+    # absolute paths: panda3d resolves model paths against its own model-path,
+    # not the CWD, so relative paths fail to load.
+    cad_paths = [p.resolve() for p in cad_dir.glob("*.ply")]
+    cad_paths += [p.resolve() for p in cad_dir.glob("*.obj")]
     logger.info(f"Found {len(list(cad_paths))} objects in {cad_dir}")
     logger.info(f"Found {len(list(cad_paths))} objects")
 

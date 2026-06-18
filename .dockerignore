@@ -1,0 +1,22 @@
+# Keep the build context (and image layers) to just the environment + code.
+# Big data/weights/results are bind-mounted at runtime, never baked.
+gigaPose_datasets/
+outputs/
+local_data/
+media/
+.git/
+.cache/
+**/.cache/
+**/__pycache__/
+*.pyc
+
+# weights / large binary artifacts (downloaded or mounted, never baked)
+*.pth
+*.pkl
+*.onnx
+*.ckpt
+
+# host-only / dev clutter
+*.egg-info/
+.vscode/
+.idea/

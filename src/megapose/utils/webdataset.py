@@ -36,6 +36,10 @@ def group_by_keys(data, keys=base_plus_ext, lcase=True, suffixes=None, handler=N
     current_sample = None
     for filesample in data:
         assert isinstance(filesample, dict)
+        # newer webdataset (1.x) can emit trailing/meta entries without a
+        # filename at end-of-stream; skip anything that isn't a real file.
+        if "fname" not in filesample or "data" not in filesample:
+            continue
         fname, value = filesample["fname"], filesample["data"]
         prefix, suffix = keys(fname)
         if trace:

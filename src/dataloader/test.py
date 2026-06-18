@@ -128,7 +128,11 @@ class GigaPoseTestSet(GigaPoseTrainSet):
             init_number_locs += len(image_locs)
             # group by instance_id
             image_locs_by_instance_id = {}
-            for loc in image_locs:
+            for idx_loc, loc in enumerate(image_locs):
+                # single-hypothesis (use_multiple=False) init files have no
+                # instance_id; treat each loc as its own instance.
+                if "instance_id" not in loc:
+                    loc["instance_id"] = idx_loc
                 instance_id = loc["instance_id"]
                 if instance_id not in image_locs_by_instance_id:
                     image_locs_by_instance_id[instance_id] = []

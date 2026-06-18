@@ -417,17 +417,27 @@ def load_test_list_and_cnos_detections(
     elif dataset_name in ["hope"]:
         year = "24"
         det_model = "cnos-sam"
+    elif dataset_name == "realsense_cup":
+        # custom dataset: prefer real CNOS-style detections (SAM-6D ISM) if
+        # present, else fall back to the mask-derived detections.
+        det_dir = root_dir / "default_detections" / dataset_name
+        cnos_dets_path = det_dir / f"{dataset_name}_cnos.json"
+        if not cnos_dets_path.exists():
+            cnos_dets_path = det_dir / f"{dataset_name}.json"
+        year = det_model = None
     else:
         raise NotImplementedError(
             f"Dataset {dataset_name} is not supported with default detections!"
         )
-    cnos_dets_dir = (
-        root_dir / "default_detections" / f"core{year}_model_based_unseen/" / det_model
-    )
-    # list all detections and take the one matching the dataset_name
-    avail_det_files = os.listdir(cnos_dets_dir)
-    cnos_dets_path = [file for file in avail_det_files if dataset_name in file][0]
-    all_cnos_dets = inout.load_json(os.path.join(cnos_dets_dir, cnos_dets_path))
+    if year is not None:
+        cnos_dets_dir = (
+            root_dir / "default_detections" / f"core{year}_model_based_unseen/" / det_model
+        )
+        # list all detections and take the one matching the dataset_name
+        avail_det_files = os.listdir(cnos_dets_dir)
+        cnos_dets_file = [file for file in avail_det_files if dataset_name in file][0]
+        cnos_dets_path = os.path.join(cnos_dets_dir, cnos_dets_file)
+    all_cnos_dets = inout.load_json(str(cnos_dets_path))
 
     # sort by image_id
     all_cnos_dets_per_image = group_by_image_level(all_cnos_dets, image_key="image_id")

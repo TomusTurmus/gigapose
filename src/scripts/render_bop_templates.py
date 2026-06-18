@@ -60,7 +60,7 @@ def call_render(
     config_name="train",
 )
 def render(cfg) -> None:
-    num_gpus = 4
+    num_gpus = 1  # this machine has a single GPU (RTX A2000); was hardcoded to 4
     disable_output = True
 
     OmegaConf.set_struct(cfg, False)

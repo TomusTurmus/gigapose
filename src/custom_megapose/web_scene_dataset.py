@@ -52,7 +52,7 @@ def load_scene_ds_obs(
         gt_available = False
 
     depth = None
-    if load_depth:
+    if load_depth and depth_format in sample:  # RGB-only datasets have no depth
         depth = imageio.imread(io.BytesIO(sample[depth_format]))
         depth = np.asarray(depth, dtype=np.float32)
         depth /= depth_scale

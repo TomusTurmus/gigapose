@@ -23,10 +23,10 @@ def convert_scene_to_imagewise(
     in bop-imagewise format.
     :param image_tkey: Template path containing the string '{image_id}'.
     """
-    if "hb" in str(input_scene_dir) or "itodd" in str(input_scene_dir) or "hope" in str(input_scene_dir):
-        gt_available = False
-    else:
-        gt_available = True
+    # GT is optional: detect by file presence rather than hardcoding dataset
+    # names, so custom datasets (e.g. realsense_cup) without scene_gt.json
+    # convert cleanly.
+    gt_available = (input_scene_dir / "scene_gt.json").exists()
     scene_data = bop_scenewise.load_scene_data(
         input_scene_dir,
         load_scene_camera=True,
